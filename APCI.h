@@ -13,14 +13,14 @@
 class APCI
 	{
 	public:
-		unsigned char start;
+		unsigned char start;			
 		unsigned char length;
 		unsigned char format;
 		unsigned char func;
 		unsigned char ssn;
 		unsigned char rsn;
 		APCI();
-		//virtual ~APCI(); Don't know yet, why do we need this.
+		virtual ~APCI();
 		void clear();
 		unsigned char get(unsigned char* data); //Caution, replacing int->unsigned char
 		void set(const unsigned char* data);
