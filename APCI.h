@@ -11,7 +11,7 @@
 #define TESTFRCON		0x80
 
 class APCI
-	{
+{
 	public:
 		unsigned char start;			
 		unsigned char length;
@@ -25,7 +25,7 @@ class APCI
 		unsigned char get(unsigned char* data); //Caution, replacing int->unsigned char
 		void set(const unsigned char* data);
 		bool valid();
-	}	
+};
 
 
 
