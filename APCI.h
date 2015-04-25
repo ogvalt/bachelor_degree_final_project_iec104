@@ -22,7 +22,7 @@ class APCI
 		APCI();
 		virtual ~APCI();
 		void clear();
-		unsigned char get(unsigned char* data); //Caution, replacing int->unsigned char
+		unsigned char get(unsigned char* data); //returns only err code
 		void set(const unsigned char* data);
 		bool valid();
 };

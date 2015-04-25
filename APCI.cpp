@@ -1,4 +1,5 @@
 #include "APCI.h"
+#include <string.h>
 
 APCI::APCI()
 {
@@ -19,7 +20,7 @@ void APCI::clear()
 	rsn = 0;
 }
 
-int APCI::get(BYTE*data)
+unsigned char APCI::get(unsigned char* data) //moving inf. from object to data[]
 {
 	if (start != 0x68)
 		return 0;
@@ -52,7 +53,7 @@ int APCI::get(BYTE*data)
 	return 6;
 }
 
-void APCI::set(const BYTE* data)
+void APCI::set(const unsigned char* data) //fill the object with inf. from data[]
 {
 	start = data[0];
 	length = data[1];
