@@ -3,8 +3,8 @@ of IEC-60870-5-104 protocol
 */
 
 
-
-
+#include "string.h"  //for memset() work
+#include <vector>
 
 
 
@@ -128,9 +128,173 @@ struct QDS
 // Value with transient state indication
 struct VTI
 {
-	unsigned int Value			: 7;
-	unsigned int Transient	: 1;
+	unsigned char Value			: 7;
+	unsigned char Transient	: 1;
+	
 };
+
+// Indicators of binary counter
+
+struct BCR
+{
+	
+	int     counter	: 32;
+	unsigned char SQ	: 5; // Sequence number
+	unsigned char CY	: 1; // Counter overflow
+	unsigned char CA	: 1; // Counter adjusted
+	unsigned char IV	: 1; // Invalid
+	
+};
+
+// Single-point command
+
+struct SCO
+{
+	
+	unsigned char SCS		: 1; // 0=OFF, 1=ON
+	unsigned char res		: 1; // Fast 0
+	unsigned char QU		: 5;
+	unsigned char ES		: 1; // 0=Execute, 1=Select
+
+};
+
+//Double-point command
+
+struct DCO
+{
+	
+	unsigned char DCS		: 2; // 0= Not permitted, 1=OFF, 2=ON, 3=Not permitted
+	unsigned char QU		: 5;
+	unsigned char ES		: 1; // 0=Execute, 1=Select
+	
+};
+
+// Stepwise regulation command
+
+struct RCO
+{
+	unsigned char RCS	: 2; // 0= Not permitted, 1=Next LOWER, 2=Next HIGHER, 3=Not permitted
+	unsigned char QU		: 5;
+	unsigned char ES		: 1; // 0=Execute, 1=Select
+};
+
+// Initialization cause
+
+struct COI
+{
+	unsigned char cause	: 7; // 
+	unsigned char change	: 1; // Initialisation after change of local parameters
+};
+
+// Quantities pointer measured
+
+struct QPM
+{
+	unsigned char KPA	: 6;
+	unsigned char LPC	:	1;
+	unsigned char POP	: 1;
+};
+
+// TIMESTAMP: define structure
+
+/*struct CP56Time2a
+{
+	unsigned int	ms		: 16; // 0..59 999 ms
+	unsigned int	min		: 6;  // 0..59 min.
+	unsigned int	res1	: 1;
+	unsigned int	IV		: 1;  // Invalid time
+	unsigned int	h			: 5;  // 0..23 h
+	unsigned int	res2	: 2;
+	unsigned int	SU		:	1;
+	unsigned int	d			: 5;  // 0..31 Dag i m?neden
+	unsigned int	wd		: 3;  // 1..7 Dag i uka
+	unsigned int	m			: 4;  // 1..12 M?ned
+	unsigned int	res3	: 4;
+	unsigned int	y			: 7;  // 0..99 ?r
+	unsigned int	res4	: 1;
+};*/
+
+class DataUnitIdentifier
+{
+	public: 
+		unsigned char typeIdent;
+		QualifierVariableStructute qualifier;
+		CauseOfTransmission cause;
+		unsigned short commonAdrASDU;
+	
+		DataUnitIdentifier() // constructor
+		{
+			clear();
+		};
+		
+		void clear(){
+			typeIdent = 0;
+			memset(&qualifier,0,1);
+			memset(&cause,0,2);
+			commonAdrASDU = 0;			
+		};
+};
+
+class InformationObject
+{
+	public: 
+		unsigned int objectAdr;
+		union // 1 byte 
+		{
+				SIQ 					siq;					// 1, 30
+				DIQ 					diq;					// 3, 31
+				QDS 					qds;					// 5, 7, 9, 13, 32, 34, 36
+				SCO 					sco;					// 45, 58
+				DCO 					dco;					// 46, 59
+				RCO 					rco;					// 47, 60
+//			QOS 					qos;					// 48, 61
+				COI 					coi;					// 70
+				unsigned char qoi;         // 100
+				unsigned char qcc;					// 101
+				unsigned char qrp;					// 105
+				QPM 					qpm;					// 110, 112
+		};
+		union // 5 byte
+		{
+				VTI 					 vti;					// 5, 32
+				unsigned int 	 bsi;				// 7, 51
+				unsigned short nva;					// 9, 34, 48, 61
+				float 				 value;			// 13, 36, 112
+				BCR 					 bcr;					// 37
+				unsigned short fbp;
+		};
+//	   CP56Time2a cp56time; // 30, 31, 32, 34, 36, 103
+		
+		InformationObject() 
+		{
+			clear();
+		};
+		void clear()
+		{
+			objectAdr = 0;
+			qoi = 0;
+			memset(&bcr,0,5);
+//			memset(&cp56time,0,7);
+		};
+};
+
+class ASDU
+{
+public:
+	DataUnitIdentifier DUI;
+	std::vector<InformationObject> IO; // not sure that vector will work
+	ASDU();
+	virtual ~ASDU(); // not sure that virtual function is allowed
+	virtual void clear();
+	int get (unsigned char* data);
+	void set(unsigned char* data);
+	int addIO(InformationObject& i);
+	bool valid();	
+};
+
+
+
+
 
 
 
