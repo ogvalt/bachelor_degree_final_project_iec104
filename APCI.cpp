@@ -1,8 +1,11 @@
 #include "APCI.h"
 #include <string.h>
 
+<<<<<<< HEAD
 using namespace std;
 
+=======
+>>>>>>> 0b7e00f4a8489eb33fad1bf1649051befee613c1
 APCI::APCI()
 {
 	clear();
@@ -55,7 +58,11 @@ unsigned char APCI::get(unsigned char* data) //moving inf. from object to data[]
 	return 6;
 }
 
+<<<<<<< HEAD
 void APCI::set(unsigned char* data) //fill the object with inf. from data[]
+=======
+void APCI::set(const unsigned char* data) //fill the object with inf. from data[]
+>>>>>>> 0b7e00f4a8489eb33fad1bf1649051befee613c1
 {
 	start = data[0];
 	length = data[1];
@@ -106,3 +113,13 @@ bool APCI::valid()
 	}
 	return true;
 }
+<<<<<<< HEAD
+=======
+
+
+
+
+
+
+
+>>>>>>> 0b7e00f4a8489eb33fad1bf1649051befee613c1
